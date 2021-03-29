@@ -39,6 +39,17 @@ class User(db.Model):
                           nullable=False,
                           default="")
     
+    birthday = db.Column(
+        db.DateTime,
+        nullable=False
+    )
+    
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.now()
+    )
+    
     orders = db.relationship('Order',
                              backref='user')
     
