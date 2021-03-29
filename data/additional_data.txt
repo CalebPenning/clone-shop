@@ -1,0 +1,363 @@
+{
+    "flavors": [
+        {
+            "id": 1,
+            "name": "Earthy"
+        },
+        {
+            "id": 2,
+            "name": "Chemical"
+        },
+        {
+            "id": 3,
+            "name": "Pine"
+        },
+        {
+            "id": 4,
+            "name": "Spicy/Herbal"
+        },
+        {
+            "id": 5,
+            "name": "Pungent"
+        },
+        {
+            "id": 6,
+            "name": "Pepper"
+        },
+        {
+            "id": 7,
+            "name": "Flowery"
+        },
+        {
+            "id": 8,
+            "name": "Citrus"
+        },
+        {
+            "id": 9,
+            "name": "Orange"
+        },
+        {
+            "id": 10,
+            "name": "Sweet"
+        },
+        {
+            "id": 11,
+            "name": "Skunk"
+        },
+        {
+            "id": 12,
+            "name": "Grape"
+        },
+        {
+            "id": 13,
+            "name": "Minty"
+        },
+        {
+            "id": 14,
+            "name": "Woody"
+        },
+        {
+            "id": 15,
+            "name": "Cheese"
+        },
+        {
+            "id": 16,
+            "name": "Diesel"
+        },
+        {
+            "id": 17,
+            "name": "Tropical"
+        },
+        {
+            "id": 18,
+            "name": "Grapefruit"
+        },
+        {
+            "id": 19,
+            "name": "Nutty"
+        },
+        {
+            "id": 20,
+            "name": "Lemon"
+        },
+        {
+            "id": 21,
+            "name": "Berry"
+        },
+        {
+            "id": 22,
+            "name": "Blueberry"
+        },
+        {
+            "id": 23,
+            "name": "Ammonia"
+        },
+        {
+            "id": 24,
+            "name": "Apple"
+        },
+        {
+            "id": 25,
+            "name": "Rose"
+        },
+        {
+            "id": 26,
+            "name": "Butter"
+        },
+        {
+            "id": 27,
+            "name": "Honey"
+        },
+        {
+            "id": 28,
+            "name": "Tea"
+        },
+        {
+            "id": 29,
+            "name": "Lime"
+        },
+        {
+            "id": 30,
+            "name": "Lavender"
+        },
+        {
+            "id": 31,
+            "name": "Strawberry"
+        },
+        {
+            "id": 32,
+            "name": "Mint"
+        },
+        {
+            "id": 33,
+            "name": "Chestnut"
+        },
+        {
+            "id": 34,
+            "name": "Tree Fruit"
+        },
+        {
+            "id": 35,
+            "name": "Pear"
+        },
+        {
+            "id": 36,
+            "name": "Apricot"
+        },
+        {
+            "id": 37,
+            "name": "Peach"
+        },
+        {
+            "id": 38,
+            "name": "Blue Cheese"
+        },
+        {
+            "id": 39,
+            "name": "Menthol"
+        },
+        {
+            "id": 40,
+            "name": "Coffee"
+        },
+        {
+            "id": 41,
+            "name": "Tar"
+        },
+        {
+            "id": 42,
+            "name": "Mango"
+        },
+        {
+            "id": 43,
+            "name": "Pineapple"
+        },
+        {
+            "id": 44,
+            "name": "Sage"
+        },
+        {
+            "id": 45,
+            "name": "Vanilla"
+        },
+        {
+            "id": 46,
+            "name": "Plum"
+        },
+        {
+            "id": 47,
+            "name": "Tobacco"
+        },
+        {
+            "id": 48,
+            "name": "Violet"
+        }
+    ],
+    "effects": [
+        {
+            "id": 1,
+            "effect_type": "positive",
+            "name": "Relaxed"
+        },
+        {
+            "id": 2,
+            "effect_type": "negative",
+            "name": "Dizzy"
+        },
+        {
+            "id": 3,
+            "effect_type": "positive",
+            "name": "Hungry"
+        },
+        {
+            "id": 4,
+            "effect_type": "positive",
+            "name": "Euphoric"
+        },
+        {
+            "id": 5,
+            "effect_type": "positive",
+            "name": "Happy"
+        },
+        {
+            "id": 6,
+            "effect_type": "medical",
+            "name": "Depression"
+        },
+        {
+            "id": 7,
+            "effect_type": "medical",
+            "name": "Insomnia"
+        },
+        {
+            "id": 8,
+            "effect_type": "medical",
+            "name": "Pain"
+        },
+        {
+            "id": 9,
+            "effect_type": "medical",
+            "name": "Stress"
+        },
+        {
+            "id": 10,
+            "effect_type": "medical",
+            "name": "Cramps"
+        },
+        {
+            "id": 11,
+            "effect_type": "positive",
+            "name": "Creative"
+        },
+        {
+            "id": 12,
+            "effect_type": "positive",
+            "name": "Energetic"
+        },
+        {
+            "id": 13,
+            "effect_type": "positive",
+            "name": "Talkative"
+        },
+        {
+            "id": 14,
+            "effect_type": "medical",
+            "name": "Lack Of Appetite"
+        },
+        {
+            "id": 15,
+            "effect_type": "medical",
+            "name": "Nausea"
+        },
+        {
+            "id": 16,
+            "effect_type": "negative",
+            "name": "Dry Mouth"
+        },
+        {
+            "id": 17,
+            "effect_type": "medical",
+            "name": "Headache"
+        },
+        {
+            "id": 18,
+            "effect_type": "positive",
+            "name": "Uplifted"
+        },
+        {
+            "id": 19,
+            "effect_type": "positive",
+            "name": "Tingly"
+        },
+        {
+            "id": 20,
+            "effect_type": "negative",
+            "name": "Paranoid"
+        },
+        {
+            "id": 21,
+            "effect_type": "positive",
+            "name": "Sleepy"
+        },
+        {
+            "id": 22,
+            "effect_type": "medical",
+            "name": "Fatigue"
+        },
+        {
+            "id": 23,
+            "effect_type": "medical",
+            "name": "Headaches"
+        },
+        {
+            "id": 24,
+            "effect_type": "negative",
+            "name": "Dry Eyes"
+        },
+        {
+            "id": 25,
+            "effect_type": "positive",
+            "name": "Focused"
+        },
+        {
+            "id": 26,
+            "effect_type": "medical",
+            "name": "Eye Pressure"
+        },
+        {
+            "id": 27,
+            "effect_type": "negative",
+            "name": "Anxious"
+        },
+        {
+            "id": 28,
+            "effect_type": "positive",
+            "name": "Giggly"
+        },
+        {
+            "id": 29,
+            "effect_type": "positive",
+            "name": "Aroused"
+        },
+        {
+            "id": 30,
+            "effect_type": "medical",
+            "name": "Inflammation"
+        },
+        {
+            "id": 31,
+            "effect_type": "medical",
+            "name": "Spasticity"
+        },
+        {
+            "id": 32,
+            "effect_type": "medical",
+            "name": "Seizures"
+        },
+        {
+            "id": 33,
+            "effect_type": "medical",
+            "name": "Muscle Spasms"
+        }
+    ]
+}
