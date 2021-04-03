@@ -1,6 +1,6 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, IntegerField
-from wtforms.validators import DataRequired, Email, Length
+from flask_wtf import FlaskForm, RecaptchaField
+from wtforms import StringField, PasswordField, IntegerField, DateTimeField, DateField
+from wtforms.validators import DataRequired, Email, Length, email_validator
 
 class SignUpForm(FlaskForm):
     """Form used for user sign up."""
@@ -8,7 +8,7 @@ class SignUpForm(FlaskForm):
     username = StringField(
         'Username', 
         validators=[
-            DataRequired, 
+            DataRequired(message="Please enter a username."), 
             Length(min=1, max=50)
             ]
         )
@@ -41,4 +41,36 @@ class SignUpForm(FlaskForm):
         validators=[
             DataRequired(message="Please enter your last name.")
         ]
+    )
+    
+    birthday = DateTimeField(
+        'Birthday',
+        validators=[
+            DataRequired()
+        ],
+        format="%m/%d/%Y"
+    )
+    
+class LoginForm(FlaskForm):
+    username = StringField(
+        "Username",
+        validators=[
+            DataRequired(message="Please enter your username.")
+        ])
+    
+    password = PasswordField(
+        "Password",
+        validators=[
+            DataRequired(message="Please enter your password.")
+        ]
+    )
+    
+
+class TestForm(FlaskForm):
+    time = DateTimeField(
+        "Test",
+        validators=[
+            DataRequired()
+            ],
+        format="%m/%d/%Y"
     )

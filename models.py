@@ -39,16 +39,12 @@ class User(db.Model):
                           nullable=False,
                           default="")
     
-    birthday = db.Column(
-        db.DateTime,
-        nullable=False
-    )
+    birthday = db.Column(db.DateTime,
+                         nullable=False)
     
-    created_at = db.Column(
-        db.DateTime,
-        nullable=False,
-        default=datetime.now()
-    )
+    created_at = db.Column(db.DateTime,
+                           nullable=False,
+                           default=datetime.now())
     
     orders = db.relationship('Order',
                              backref='user')
@@ -64,6 +60,7 @@ class User(db.Model):
         email = form.email.data
         first_name = form.first_name.data
         last_name = form.last_name.data
+        birthday = form.birthday.data
         
         hashed = bcrypt.generate_password_hash(password)
         
@@ -73,7 +70,9 @@ class User(db.Model):
                    password=hashed_utf8,
                    email=email,
                    first_name=first_name,
-                   last_name=last_name)
+                   last_name=last_name,
+                   birthday=birthday,
+                   created_at=datetime.now())
         
     @classmethod
     def authenticate(cls, form):
@@ -82,7 +81,8 @@ class User(db.Model):
         
         if u and bcrypt.check_password_hash(u.password, pwd):
             return u
-        else:
+        elif u and bcrypt.check_password_hash(u.password, pwd) == False:
+            form.password.errors = ["Invalid password"]
             return False
         
 class Order(db.Model):
