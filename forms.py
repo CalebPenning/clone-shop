@@ -44,7 +44,7 @@ class SignUpForm(FlaskForm):
     )
     
     birthday = DateTimeField(
-        'Birthday',
+        'Birthday MM/DD/YYYY',
         validators=[
             DataRequired()
         ],

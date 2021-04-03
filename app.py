@@ -2,7 +2,7 @@ import os
 from flask import Flask, redirect, request, render_template, session, url_for, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from keys_and_helpers import DATABASE_URI, SECRET_KEY, calculate_age, do_signup, do_login, get_user_from_session
+from keys_and_helpers import DATABASE_URI, SECRET_KEY, calculate_age, do_signup, do_login, get_user_from_session, compare_users
 
 from models import db, connect_db, Order, OrderItem, Item, ItemEffect, Effect, ItemFlavor, Flavor, User
 from forms import SignUpForm, TestForm, LoginForm, DateField, DateTimeField
@@ -61,7 +61,7 @@ def login_user():
         user = do_login(form)
         if user:
             session['user_id'] = user.username
-            flash(f"Welcome back, {user.username}!")
+            flash(f"Welcome back, {user.username}!", 'success')
             return redirect('/home')
         
         else:
@@ -69,23 +69,6 @@ def login_user():
             return redirect('/users/login')
         
     return render_template('users/login.html', form=form)
-
-@app.route('/test', methods=["GET", "POST"])
-def test_field():
-    form = TestForm()
-    if request.method == "POST":
-        time = form.time.data
-        print(f"""
-              {time}
-              {time}
-              {time}
-              {time}
-              {time}
-              {time}
-              """)
-        flash(f"{time}")
-        return redirect('/test')
-    return render_template('test.html', form=form)
 
 @app.route('/users/logout')
 def log_user_out():
@@ -95,9 +78,19 @@ def log_user_out():
         return redirect('/home')
     
     else:
-        flash('what you doin')
+        flash('You cannot logout because you are not logged in.', 'danger')
         return redirect('/home')
     
+@app.route('/users/<int:id>/profile')
+def show_user_profile(id):
+    if 'user_id' not in session:
+        flash("You do not have permission to view that page.", 'danger')
+        return redirect('/')
+    else:
+        curr_user = get_user_from_session(session['user_id'])
+        req_user = User.query.get_or_404(id)
+        
+        
 @app.route('/shop')
 def shop_homepage():
     curr_user = get_user_from_session(session['user_id'])
@@ -108,5 +101,5 @@ def shop_homepage():
 def get_item_details(id: int):
     req_item = Item.query.get_or_404(id)
     curr_user = User.query.filter_by(username=session['user_id']).first_or_404()
-    return render_template('items/details.html', item=item, user=curr_user)
+    return render_template('items/details.html', item=req_item, user=curr_user)
 

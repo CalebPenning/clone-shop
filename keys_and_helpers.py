@@ -56,3 +56,13 @@ def get_user_from_session(username):
     
     else:
         return False
+    
+def compare_users(curr_user, target_user_id):
+    session_user = User.query.filter_by(username=curr_user).first_or_404()
+    if session_user:
+        target_user = User.query.get_or_404(target_user_id)
+        
+        if target_user == session_user:
+            return True
+        
+    return False

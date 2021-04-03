@@ -47,6 +47,15 @@
 {% endblock %}
 </nav>
 </header>
+<div class="container">
+    {% block msgs %}
+
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+
+    {% endblock %}
+</div>
 
 {% block content %}
 {% endblock %}
