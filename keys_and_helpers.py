@@ -120,7 +120,7 @@ def check_orders(item_id, order_id):
     else:
         return False
     
-def add_item_to_cart(item_id, form, username):
+def add_item(item_id, form, username):
     cart = get_user_cart(username)
     if cart:
         quantity = int(form.quantity.data)
@@ -143,6 +143,27 @@ def add_item_to_cart(item_id, form, username):
     
     else:
         return False
-            
+
+def adjust_quantity(item_id, form, username):
+    cart = get_user_cart(username)
+    
+    if cart:
+        quantity = int(form.quantity.data)
+        items_in_cart = check_orders(item_id, cart.id)
         
+        if items_in_cart:
+            items_in_cart.quantity = quantity
+            db.session.commit()
+            return True
         
+        else:
+            item_to_add = OrderItem(
+                item_id=item_id,
+                order_id=cart.id,
+                quantity=quantity
+            )
+            db.session.add(item_to_add)
+            db.session.commit()
+            return True
+    else:
+        return False

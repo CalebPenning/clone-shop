@@ -4,10 +4,10 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import func
 from sqlalchemy.sql.functions import random
-from keys_and_helpers import DATABASE_URI, SECRET_KEY, calculate_age, do_signup, do_login, get_user_from_session, compare_users, confirm_passwords
+from keys_and_helpers import DATABASE_URI, SECRET_KEY, calculate_age, do_signup, do_login, get_user_from_session, compare_users, confirm_passwords, add_item, adjust_quantity
 
 from models import db, connect_db, Order, OrderItem, Item, ItemEffect, Effect, ItemFlavor, Flavor, User
-from forms import SignUpForm, TestForm, LoginForm, DateField, DateTimeField
+from forms import SignUpForm, TestForm, LoginForm, DateField, DateTimeField, AddItemForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get(
@@ -101,12 +101,41 @@ def shop_homepage():
     
 @app.route('/shop/items/<int:id>/details')
 def get_item_details(id: int):
+    form = AddItemForm()
     req_item = Item.query.get_or_404(id)
     curr_user = User.query.filter_by(username=session['user_id']).first_or_404()
-    return render_template('items/details.html', item=req_item, user=curr_user)
+    return render_template('items/details.html', item=req_item, user=curr_user, form=form)
 
 @app.route('/shop/items/<int:id>/add', methods=["POST"])
 def add_item_to_cart(id):
+    if 'user_id' in session:
+        add_to_cart = add_item(id, form, session['user_id'])
+        if add_to_cart:
+            flash("Item added successfully. Access your cart <a href='#'>here</a>", 'success')
+            return redirect(f"/shop/items/{id}")
+        else:
+            flash("FAILURE", 'danger')
+            return redirect(f"/shop/items/{id}/details")
+    else:
+        flash("You do not have permission to add")
+        return redirect('/')
+    
+@app.route('/shop/items/<int:id>/adjust', methods=["PATCH"])
+def adjust_item_quantity(id):
+    if 'user_id' in session:
+        adjusted_items = adjust_quantity(id, form, session['user_id'])
+        if adjusted_items:
+            flash("Item quantity adjusted. Access your cart <a href='#'>here</a>", 'success')
+        else:
+            flash("Failure")
+            return redirect(f"/shop/items/{id}/details")
+        
+    else:
+        flash("Please login to place an order.", 'warning')
+        return redirect('/')
+    
+@app.route('/shop/items/<int:id>/delete', methods=["PATCH"])
+def remove_order_item(id):
     pass
 
 

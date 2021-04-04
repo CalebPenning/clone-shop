@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm, RecaptchaField
-from wtforms import StringField, PasswordField, IntegerField, DateTimeField, DateField
-from wtforms.validators import DataRequired, Email, Length, email_validator
+from wtforms import StringField, PasswordField, IntegerField, DateTimeField, DateField, SelectField
+from wtforms.validators import DataRequired, Email, Length, email_validator, InputRequired
 
 class SignUpForm(FlaskForm):
     """Form used for user sign up."""
@@ -71,6 +71,14 @@ class LoginForm(FlaskForm):
         validators=[
             DataRequired(message="Please enter your password.")
         ]
+    )
+
+class AddItemForm(FlaskForm):
+    quantity = SelectField(
+        'Quantity',
+        validators=[InputRequired()],
+        coerce=int,
+        choices=[(num, num) for num in range(0, 13)]
     )
     
 
