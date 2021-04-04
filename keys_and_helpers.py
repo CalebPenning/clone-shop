@@ -1,7 +1,8 @@
 import datetime
 from flask import flash, session
+from sqlalchemy.sql.expression import func
 from sqlalchemy.exc import IntegrityError
-from models import User, Order, db
+from models import User, Order, db, bcrypt, OrderItem
 
 SECRET_KEY = '3UsZBW6qU3'
 DATABASE_URI = "postgresql:///clone_shop"
@@ -66,3 +67,82 @@ def compare_users(curr_user, target_user_id):
             return True
         
     return False
+
+def confirm_passwords(form):
+    b = bcrypt
+    
+    true_pw = b.generate_password_hash(form.password.data)
+    hashed_pw = true_pw.decode("UTF-8")
+    confirm_pw = form.confirm_password.data
+    
+    if b.check_password_hash(hashed_pw, confirm_pw):
+        return True
+    
+    return False
+
+def get_user_cart(username):
+    user = get_user_from_session(username)
+    
+    if user:
+        user_cart = Order.query.filter_by(
+            user_id=user.id
+        ).filter_by(
+            order_status='active'
+        ).first_or_404()
+        
+        if user_cart:
+            return user_cart
+        
+        elif user and not user_cart:
+            new_cart = Order(user_id=user.id)
+            db.session.add(new_cart)
+            
+            try:
+                db.session.commit()
+                return new_cart
+            
+            except IntegrityError:
+                db.session.rollback()
+                return False
+        else:
+            return False
+        
+def check_orders(item_id, order_id):
+    items_in_cart = Order.query.filter(
+        OrderItem.order_id == order_id
+    ).filter(
+        OrderItem.item_id == item_id
+    ).first()
+    
+    if items_in_cart:
+        return items_in_cart
+    
+    else:
+        return False
+    
+def add_item_to_cart(item_id, form, username):
+    cart = get_user_cart(username)
+    if cart:
+        quantity = int(form.quantity.data)
+        items_in_cart = check_orders(item_id, cart.id)
+        
+        if items_in_cart:
+            items_in_cart.quantity += quantity
+            db.session.commit()
+            return True
+        
+        else:
+            item_to_add = OrderItem(
+                item_id=item_id,
+                order_id=cart.id,
+                quantity=quantity
+            )
+            db.session.add(item_to_add)
+            db.session.commit()
+            return True
+    
+    else:
+        return False
+            
+        
+        

@@ -1,3 +1,11 @@
 * {
     font-family: 'Brygada 1918', serif;
 }
+
+body {
+    background: no-repeat url("./assets/background-img.jpg");
+}
+
+.col-md-4 {
+    height: 400px;
+}

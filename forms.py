@@ -29,6 +29,14 @@ class SignUpForm(FlaskForm):
         ]
     )
     
+    confirm_password = PasswordField(
+        'Confirm Password',
+        validators=[
+            Length(min=6, max=40),
+            DataRequired(message="Please confirm your password.")
+        ]
+    )
+    
     first_name = StringField(
         'First Name',
         validators=[

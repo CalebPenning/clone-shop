@@ -2,7 +2,9 @@ import os
 from flask import Flask, redirect, request, render_template, session, url_for, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from keys_and_helpers import DATABASE_URI, SECRET_KEY, calculate_age, do_signup, do_login, get_user_from_session, compare_users
+from sqlalchemy.sql.expression import func
+from sqlalchemy.sql.functions import random
+from keys_and_helpers import DATABASE_URI, SECRET_KEY, calculate_age, do_signup, do_login, get_user_from_session, compare_users, confirm_passwords
 
 from models import db, connect_db, Order, OrderItem, Item, ItemEffect, Effect, ItemFlavor, Flavor, User
 from forms import SignUpForm, TestForm, LoginForm, DateField, DateTimeField
@@ -30,7 +32,7 @@ def go_home():
 
 @app.route('/home', methods=["GET", "POST"])
 def homepage():
-    items = Item.query.limit(20).all()
+    items = Item.query.order_by(random()).limit(20).all()
     
     if 'user_id' in session:
         user = get_user_from_session(session['user_id'])
@@ -47,10 +49,11 @@ def user_signup():
         return redirect('/')
     
     if form.validate_on_submit():
-        new_user = do_signup(form)
-        session['user_id'] = new_user.username
-        flash("Account created successfully. Welcome!", 'success')
-        return redirect('/home')
+        if confirm_passwords(form):
+            new_user = do_signup(form)
+            session['user_id'] = new_user.username
+            flash("Account created successfully. Welcome!", 'success')
+            return redirect('/home')
 
     return render_template('users/signup.html', form=form)
 
@@ -82,14 +85,13 @@ def log_user_out():
         return redirect('/home')
     
 @app.route('/users/<int:id>/profile')
-def show_user_profile(id):
+def show_user_profile(id: int):
     if 'user_id' not in session:
         flash("You do not have permission to view that page.", 'danger')
         return redirect('/')
     else:
-        curr_user = get_user_from_session(session['user_id'])
-        req_user = User.query.get_or_404(id)
-        
+        if compare_users(session['user_id'], id) == True:
+            return 
         
 @app.route('/shop')
 def shop_homepage():
@@ -97,9 +99,18 @@ def shop_homepage():
     if curr_user:
         return render_template('shop/home.html', user=curr_user)
     
-@app.route('/items/<int:id>/details')
+@app.route('/shop/items/<int:id>/details')
 def get_item_details(id: int):
     req_item = Item.query.get_or_404(id)
     curr_user = User.query.filter_by(username=session['user_id']).first_or_404()
     return render_template('items/details.html', item=req_item, user=curr_user)
 
+@app.route('/shop/items/<int:id>/add', methods=["POST"])
+def add_item_to_cart(id):
+    pass
+
+
+@app.route('/random-items')
+def get_rando():
+    items = Item.query.order_by(random()).limit(10).all()
+    return render_template('random.html', items=items)
