@@ -1,22 +1,11 @@
 import datetime
-from flask import flash, session
+from flask import flash, session, request, redirect
 from sqlalchemy.sql.expression import func
 from sqlalchemy.exc import IntegrityError
-from models import User, Order, db, bcrypt, OrderItem
+from models import User, Order, db, bcrypt, OrderItem, Item
 
 SECRET_KEY = '3UsZBW6qU3'
 DATABASE_URI = "postgresql:///clone_shop"
-SEARCH_API_KEY = "AIzaSyC77NKlE2t1A8CvUIhjTfnlykApxLiR00I"
-
-def calculate_age(date):
-    now = datetime.datetime.now()
-    calculated = now.year - date.year - ((now.month, now.day) < (date.month, date.day))
-    
-    if calculated >= 21:
-        return True
-    
-    else:
-        return False
     
 def check_birthday(date):
     now = datetime.datetime.now()
@@ -47,8 +36,6 @@ def do_signup(form):
     
     return new_user
 
-def do_login(form):
-    return User.authenticate(form)
 
 def get_user_from_session(username):
     if 'user_id' in session:
@@ -108,7 +95,7 @@ def get_user_cart(username):
             return False
         
 def check_orders(item_id, order_id):
-    items_in_cart = Order.query.filter(
+    items_in_cart = OrderItem.query.filter(
         OrderItem.order_id == order_id
     ).filter(
         OrderItem.item_id == item_id
@@ -120,10 +107,10 @@ def check_orders(item_id, order_id):
     else:
         return False
     
-def add_item(item_id, form, username):
+def add_item(item_id, req, username):
     cart = get_user_cart(username)
     if cart:
-        quantity = int(form.quantity.data)
+        quantity = int(req.form.get('quantity'))
         items_in_cart = check_orders(item_id, cart.id)
         
         if items_in_cart:
@@ -144,13 +131,15 @@ def add_item(item_id, form, username):
     else:
         return False
 
-def adjust_quantity(item_id, form, username):
+def adjust_quantity(item_id, req, username):
     cart = get_user_cart(username)
     
     if cart:
-        quantity = int(form.quantity.data)
+        print("CART:::::::::", cart)
+        quantity = int(req.form.get('quantity'))
+        print("QUANTITY:::::: ", quantity)
         items_in_cart = check_orders(item_id, cart.id)
-        
+        print("ITEMS IN CART:::::: ", items_in_cart)
         if items_in_cart:
             items_in_cart.quantity = quantity
             db.session.commit()
@@ -167,3 +156,52 @@ def adjust_quantity(item_id, form, username):
             return True
     else:
         return False
+    
+def remove_items(item_id, username):
+    cart = get_user_cart(username)
+    
+    if cart:
+        items_to_remove = check_orders(item_id, cart.id)
+        if items_to_remove:
+            db.session.delete(items_to_remove)
+            db.session.commit()
+            flash("Items removed.", 'success')
+            return True
+        else: 
+            return False
+    else:
+        flash("Error retrieving either your order or the order item. Please make sure you are logged in and try again.", 'danger')
+        return False
+        
+def do_search(req, limit_to=10):
+    search_param = req.args.get('search-param')
+    keyword = req.args.get('keyword')
+    if search_param == "Name":
+        results = (Item
+                   .query
+                   .filter(
+                       Item.name.ilike(f"%{keyword}%")
+                   )
+                   .all())
+        print(results)
+        return Item.query.filter(Item.name.ilike(f"%{keyword}")).all()
+        
+        # if page_num == 1:
+        #     result_slice = [x for x in results if x <= page_num * 10 and x >= (page_num * 1) - 1]
+            
+        # else:
+        #     result_slice = [x for x in results if x <= page_num * 10 and x > page_num ]
+    
+    elif search_param == "Description":
+        results = Item.query.filter(
+            Item
+            .description
+            .ilike(f"%{keyword}%")
+        ).limit(limit_to).all()
+        print(results)
+        return results
+        
+    else: 
+        flash('Something happened', 'danger')
+        return redirect('/home')
+    

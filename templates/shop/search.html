@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="album py-5 bg-light">
+<div class="container">
+    <div class="row">
+    {% for result in results %}
+                <div class="col-md-4">
+                <div class="card mb-4 box-shadow">
+                    <img src="../static/assets/logo.png" alt="lush logo" class="card-img-top" style=" height: 225px; width: 100%; display: block;">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ result.name }}</h2>
+                        <p class="lead">{{ result.race }}</p>
+                        {# <p class="card-text">
+                        {{ item.description }}
+                        </p> #}
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a class="btn-success btn-sm" href="/shop/items/{{ result.id }}/details">Details</a>
+                                <a class="btn btn-sm btn-dark" href="/shop/items/{{result.id}}/cart/add">Add To Cart</a>
+                                <small class="text-bold"><b>${{ result.price }}</b></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+    {% endfor %}
+    </div>
+</div>
+</div>
+{% endblock content %}

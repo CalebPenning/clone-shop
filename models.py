@@ -76,7 +76,7 @@ class User(db.Model):
         
     @classmethod
     def authenticate(cls, form):
-        u = User.query.filter_by(username=username).first()
+        u = User.query.filter_by(username=form.username.data).first_or_404()
         pwd = form.password.data
         
         if u and bcrypt.check_password_hash(u.password, pwd):

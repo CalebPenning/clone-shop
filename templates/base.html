@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Brygada+1918&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
@@ -22,13 +22,11 @@
     <img src="/static/assets/logo.png" width="90" height="40" alt="">
 </a>
 <div class="collapse navbar-collapse" id="navbarToggler">
-<form class="form-inline my-2 my-lg-0" action="/search">
+<form class="form-inline my-2 my-lg-0" action="/shop/search">
     <select name="search-param" id="search-param" class="mdb-select form-control md-form nav-item">
         <option value="" disabled selected>Search By...</option>
-        <option value="flavor">Flavor</option>
         <option value="name">Name</option>
-        <option value="race">Race</option>
-        <option value="effect">Effect</option>
+        <option value="description">Description</option>
     </select>
     <input type="text" name="keyword" class="form-control mr-sm-2 nav-item" placeholder="Keyword"/>
     <button type="submit" class="btn btn-success">Search Store</button>
@@ -38,8 +36,8 @@
         <li class="nav-item"><a class="nav-link" href="/users/signup">Sign up</a></li>
         <li class="nav-item"><a class="nav-link" href="/users/login">Login</a></li>
     {% else %}
-        <li class="nav-item"><a class="nav-link" href="/users/{{user.id}}">Account Details</a></li>
-        <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/{{user.id}}/profile">Account Details</a></li>
+        <li class="nav-item"><a href="/users/{{user.id}}/cart" class="nav-link"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
         <li class="nav-item"><a class="nav-link" href="/users/logout">Logout</a></li>
     {% endif %}
 </ul>

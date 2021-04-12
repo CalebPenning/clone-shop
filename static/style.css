@@ -6,6 +6,26 @@ body {
     background: no-repeat url("./assets/background-img.jpg");
 }
 
-.col-md-4 {
+/* .col-md-4 {
     height: 400px;
+} */
+
+.col {
+    color: white;
+}
+
+th {
+    color: white;
+}
+
+td {
+    color: white;
+}
+
+tr {
+    color: white;
+}
+
+h1 {
+    color: white;
 }

@@ -4,10 +4,11 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import func
 from sqlalchemy.sql.functions import random
-from keys_and_helpers import DATABASE_URI, SECRET_KEY, calculate_age, do_signup, do_login, get_user_from_session, compare_users, confirm_passwords, add_item, adjust_quantity
+from helpers import check_birthday, do_signup, get_user_from_session, compare_users, confirm_passwords, add_item, adjust_quantity, remove_items, get_user_cart, do_search
+from keys import DATABASE_URI, SECRET_KEY
 
 from models import db, connect_db, Order, OrderItem, Item, ItemEffect, Effect, ItemFlavor, Flavor, User
-from forms import SignUpForm, TestForm, LoginForm, DateField, DateTimeField, AddItemForm
+from forms import SignUpForm, TestForm, LoginForm, DateField, DateTimeField, ItemQuantityForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get(
@@ -26,13 +27,29 @@ debug = DebugToolbarExtension(app)
 
 connect_db(app)
 
+def test_search(param, keyword, limit=21):
+    if param == 'Name':
+        return (Item
+                .query
+                .filter(
+                    Item.name.ilike(f"%{keyword}%")
+                )
+                .limit(limit)).all()
+    
+    elif param == 'Description':
+        return (Item
+                .query
+                .filter(
+                    Item.description.ilike(f"%{keyword}%")
+                )).all()
+
 @app.route('/')
 def go_home():
     return redirect('/home')
 
 @app.route('/home', methods=["GET", "POST"])
 def homepage():
-    items = Item.query.order_by(random()).limit(20).all()
+    items = Item.query.order_by(random()).limit(21).all()
     
     if 'user_id' in session:
         user = get_user_from_session(session['user_id'])
@@ -61,17 +78,17 @@ def user_signup():
 def login_user():
     form = LoginForm()
     if form.validate_on_submit():
-        user = do_login(form)
+        user = User.authenticate(form)
         if user:
             session['user_id'] = user.username
             flash(f"Welcome back, {user.username}!", 'success')
-            return redirect('/home')
+            return url_for(homepage())
         
         else:
             form.username.errors.append('Incorrect username.')
             return redirect('/users/login')
-        
-    return render_template('users/login.html', form=form)
+    else: 
+        return render_template('users/login.html', form=form)
 
 @app.route('/users/logout')
 def log_user_out():
@@ -88,31 +105,71 @@ def log_user_out():
 def show_user_profile(id: int):
     if 'user_id' not in session:
         flash("You do not have permission to view that page.", 'danger')
-        return redirect('/')
+        return redirect('/home')
     else:
         if compare_users(session['user_id'], id) == True:
-            return 
+            user = get_user_from_session(session['user_id'])
+            return render_template('users/profile.html', user=user)
         
+        else:
+            flash("You do not have permission to view that page.", 'warning')
+            return redirect('/login')
+
+@app.route('/users/<int:id>/cart')
+def show_user_cart(id):
+    if 'user_id' not in session:
+        flash("You do not have permission to view this page.", 'warning')
+        return redirect('/login')
+    else:
+        if compare_users(session['user_id'], id) == True:
+            user = get_user_from_session(session['user_id'])
+            cart = get_user_cart(session['user_id'])
+            form = ItemQuantityForm()
+            return render_template('users/cart.html', user=user, order=cart, form=form)
+        else:
+            flash("You cannot view or edit another user's orders. You have been redirected.", 'danger')
+            return redirect('/home')
+
+@app.route('/users/<int:id>/cart/checkout', methods=["GET", "POST"])
+def confirm_order(id):
+    pass
+
 @app.route('/shop')
 def shop_homepage():
     curr_user = get_user_from_session(session['user_id'])
     if curr_user:
         return render_template('shop/home.html', user=curr_user)
+
+@app.route('/shop/search')
+def get_search_results():
+    param = request.args.get('search-param').title()
+    keyword = request.args.get('keyword')
+    print(param, keyword)
+    search_results = test_search(param, keyword)
+    print(search_results)
+    if search_results and 'user_id' in session:        
+        curr_user = get_user_from_session(session['user_id'])
+        return render_template('shop/search.html', results=search_results, user=curr_user)
+    
+    else:
+        return redirect(url_for(session[-1]))
     
 @app.route('/shop/items/<int:id>/details')
 def get_item_details(id: int):
-    form = AddItemForm()
+    form = ItemQuantityForm()
     req_item = Item.query.get_or_404(id)
     curr_user = User.query.filter_by(username=session['user_id']).first_or_404()
     return render_template('items/details.html', item=req_item, user=curr_user, form=form)
 
+
 @app.route('/shop/items/<int:id>/add', methods=["POST"])
-def add_item_to_cart(id):
+def add_item_to_cart(id: int):
     if 'user_id' in session:
-        add_to_cart = add_item(id, form, session['user_id'])
+        print("OK")
+        add_to_cart = add_item(id, request, session['user_id'])
         if add_to_cart:
             flash("Item added successfully. Access your cart <a href='#'>here</a>", 'success')
-            return redirect(f"/shop/items/{id}")
+            return redirect(f"/shop/items/{id}/details")
         else:
             flash("FAILURE", 'danger')
             return redirect(f"/shop/items/{id}/details")
@@ -120,23 +177,37 @@ def add_item_to_cart(id):
         flash("You do not have permission to add")
         return redirect('/')
     
-@app.route('/shop/items/<int:id>/adjust', methods=["PATCH"])
+
+@app.route('/shop/items/<int:id>/adjust', methods=["POST"])
 def adjust_item_quantity(id):
     if 'user_id' in session:
-        adjusted_items = adjust_quantity(id, form, session['user_id'])
+        adjusted_items = adjust_quantity(id, request, session['user_id'])
         if adjusted_items:
             flash("Item quantity adjusted. Access your cart <a href='#'>here</a>", 'success')
+            return redirect(f"/shop/items/{id}/details")
         else:
             flash("Failure")
             return redirect(f"/shop/items/{id}/details")
         
     else:
         flash("Please login to place an order.", 'warning')
-        return redirect('/')
+        return redirect('/login')
     
-@app.route('/shop/items/<int:id>/delete', methods=["PATCH"])
+@app.route('/shop/items/<int:id>/delete', methods=["POST"])
 def remove_order_item(id):
-    pass
+    if 'user_id' in session:
+        items_to_delete = remove_items(id, session['user_id'])
+        if items_to_delete:
+            flash("Items removed. Access your cart <a href='#'>here</a>")
+            return redirect("/home")
+        
+        else:
+            flash("Error deleting items.")
+            return redirect("/home")
+        
+    else:
+        flash("Please login to edit an order.", 'warning')
+        return redirect('/')
 
 
 @app.route('/random-items')

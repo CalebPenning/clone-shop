@@ -4,13 +4,13 @@
 <main role="main">
     <section class="jumbotron text-center">
     <div class="container">
-        <h1 class="jumbotron-heading">Weed</h1>
+        <h1 class="jumbotron-heading">Welcome</h1>
         <p class="lead text-muted">
         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam dolore hic ad repellat dolorum nemo quisquam dolores! Aut laboriosam, neque, sit harum rerum totam adipisci voluptates quis porro, amet beatae. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam non assumenda explicabo enim ullam cumque, delectus quae voluptate expedita animi vel eos unde ex tempore molestias hic, nihil fugit deserunt. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, officia voluptatum. Suscipit magnam magni, earum neque quibusdam error soluta, esse cum natus ea animi, voluptates quo. At obcaecati porro quaerat?
         </p>
         <p>
             <a href="/shop/home" class="btn btn-success my-2">Weed</a>
-            <a href="#" class="btn btn-dark my-2">Your Weed</a>
+            <a href="/users/{{ user.id }}/cart" class="btn btn-dark my-2">Your Weed</a>
         </p>
     </div>
     </section>
@@ -20,7 +20,7 @@
                 {% for item in items %}
                 <div class="col-md-4">
                 <div class="card mb-4 box-shadow">
-                    <img src="./static/assets/logo.png" alt="lush ass logo" class="card-img-top" style=" height: 225px; width: 100%; display: block;">
+                    <img src="./static/assets/logo.png" alt="lush logo" class="card-img-top" style=" height: 225px; width: 100%; display: block;">
                     <div class="card-body">
                         <h2 class="card-title">{{ item.name }}</h2>
                         <p class="lead">{{ item.race }}</p>
@@ -30,8 +30,8 @@
 
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
-                                <a class="btn-success btn-sm" href="/items/{{ item.id }}/details">Details</a>
-                                <a class="btn btn-sm btn-dark" href="/items/{{item.id}}/cart/add">Add To Cart</a>
+                                <a class="btn-success btn-sm" href="/shop/items/{{ item.id }}/details">Details</a>
+                                <a class="btn btn-sm btn-dark" href="/shop/items/{{item.id}}/cart/add">Add To Cart</a>
                                 <small class="text-bold"><b>${{ item.price }}</b></small>
                             </div>
                         </div>

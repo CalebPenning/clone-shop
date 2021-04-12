@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %} {{ user.username }}'s cart {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Order #{{order.id}} Details</h1>
+    <table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Item ID#</th>
+            <th scope="col">Item Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Cost</th>
+            <th scope="col">Delete</th>        
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in order.items %}
+        <tr>
+            <th scope="row">{{ item.cart_items.id }}</th>
+            <td>{{ item.cart_items.name }}</td>
+            <td>
+            <form method="POST" action="/shop/items/{{ item.cart_items.id }}/adjust" class="form-inline">
+                <p>
+                    {% for field in form if field.widget.input_type != 'hidden' %}
+                        {{ field.label }}
+                        {{ field(
+                            placeholder=item.quantity,
+                            class_="form-inline"
+                        ) }}
+                    {% endfor %}
+                </p>
+                <button class="btn btn-success">Adjust Quantity</button>
+            </form>
+            </td>
+            <td>${{ item.quantity * item.cart_items.price }}</td>
+            <td><form action="/shop/items/{{ item.cart_items.id }}/delete" method="POST"><button type="submit"><i class="fa fa-trash"></i></button></form></td>
+        </tr>
+    {% endfor %}
+
+    <tr></tr>
+    </tbody>
+    </table>
+</div>
+{% endblock%}

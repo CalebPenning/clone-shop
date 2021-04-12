@@ -73,7 +73,7 @@ class LoginForm(FlaskForm):
         ]
     )
 
-class AddItemForm(FlaskForm):
+class ItemQuantityForm(FlaskForm):
     quantity = SelectField(
         'Quantity',
         validators=[InputRequired()],

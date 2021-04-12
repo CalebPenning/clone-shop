@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+    {% extends 'base.html' %}
 
 {% block title %}{{ item.name }} Details {% endblock %}
 
@@ -9,7 +9,16 @@
                 <h5 class="card-title">{{ item.name }}</h5>
                 <h6 class="card-subtitle text-muted">{{ item.race }}</h6>
                 <p class="card-text">{{ item.description }}</p>
-                <a href="/items/{{ item.id }}/cart/add" class="btn btn-primary">Add to cart</a>
+                <form action="/shop/items/{{item.id}}/add" method="POST" class="form-inline">
+                    <p>
+                        {% for field in form if field.widget.input_type != 'hidden' %}
+                            {{ field.label }}
+                            {{ field(placeholder=field.label.text, class_="form-inline")}}
+                        {% endfor %}
+                    </p>
+                    <button class="btn btn-success">Add To Cart</button>
+                </form>
+                {# <a href="/items/{{ item.id }}/cart/add" class="btn btn-primary">Add to cart</a> #}
             </div>
             </div>
 </div>
