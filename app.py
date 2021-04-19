@@ -30,6 +30,7 @@ if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
+db.create_all()
 
 def test_search(param, keyword, limit=21):
     if param == 'Name':
