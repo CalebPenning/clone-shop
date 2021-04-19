@@ -201,6 +201,7 @@ def get_search_results():
         except KeyError:
             try:
                 curr_user = get_user_from_session(session['user_id'])
+                print(curr_user.id, curr_user.username, "**********************************")
                 return render_template('shop/search.html', results=search_results, user=curr_user)
             except KeyError:
                 flash("Something went wrong on our end. Sorry about that.", 'danger')
