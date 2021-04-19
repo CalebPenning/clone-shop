@@ -18,7 +18,51 @@
                     </p>
                     <button class="btn btn-success">Add To Cart</button>
                 </form>
-                {# <a href="/items/{{ item.id }}/cart/add" class="btn btn-primary">Add to cart</a> #}
+                {# <ul>
+                {% for effect in item.effects %}
+                <h3>Medical Uses:</h3>
+                    {% if effect.effect_type == 'medical' %}
+                    <li class="list-group-item"> {{ effect.name }} </li>
+
+                <h3>Positive Effects:</h3>
+                    {% elif effect.effect_type == 'positive' %}
+                    <li class="list-group-item"> {{ effect.name }} </li>
+                <h3>Negative:</h3>
+                    {% else %}
+                    <li class="list-group-item"> {{ effect.name }} </li>
+                    {% endif %}
+                {% endfor %} #}
+                {# </ul> #}
+                <div class="row">
+                {# <h2>Effects:</h2> #}
+                <ul class="list-group fx col-md-4">
+                    <h3>Medical Uses</h3>
+                    <p class="lead">Customers use {{item.name}} to treat: </p>
+                    {% for effect in item.effects %}
+                        {% if effect.effect_type == 'medical' %}
+                            <li class="list-group-item">{{ effect.name }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <ul class="list-group  col-md-4">
+                    <h3>Positive Effects</h3>
+                    <p class="lead">Customers like {{item.name}} for making them feel: </p>
+                    {% for effect in item.effects %}
+                        {% if effect.effect_type == 'positive' %}
+                            <li class="list-group-item">{{ effect.name }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <ul class="list-group fx col-md-4">
+                    <h3>Negative Effects</h3>
+                    <p class="lead">Customers using {{ item.name }} sometimes experience: </p>
+                    {% for effect in item.effects %}
+                        {% if effect.effect_type == 'negative' %}
+                            <li class="list-group-item">{{ effect.name }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
             </div>
             </div>
 </div>

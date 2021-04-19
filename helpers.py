@@ -75,12 +75,9 @@ def get_user_cart(username):
             user_id=user.id
         ).filter_by(
             order_status='active'
-        ).first_or_404()
+        ).first()
         
-        if user_cart:
-            return user_cart
-        
-        elif user and not user_cart:
+        if user and user_cart == None:
             new_cart = Order(user_id=user.id)
             db.session.add(new_cart)
             
@@ -91,8 +88,14 @@ def get_user_cart(username):
             except IntegrityError:
                 db.session.rollback()
                 return False
+            
+        elif len(user_cart.items) > 0:
+            return user_cart
+        
         else:
             return False
+    else:
+        return False
         
 def check_orders(item_id, order_id):
     items_in_cart = OrderItem.query.filter(

@@ -82,9 +82,9 @@ class ItemQuantityForm(FlaskForm):
     )
     
 
-class TestForm(FlaskForm):
-    time = DateTimeField(
-        "Test",
+class AgeVerificationForm(FlaskForm):
+    birthday = DateTimeField(
+        "Your Birthday",
         validators=[
             DataRequired()
             ],

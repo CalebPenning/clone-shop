@@ -42,7 +42,7 @@ def get_strains():
             new_item = Item(id=int(item['id']),
                             name=item['name'],
                             description=str(item['description']),
-                            race=item['race'],
+                            race=item['race'].title(),
                             price=randint(0, 80))
             data_lst.append(new_item)
 

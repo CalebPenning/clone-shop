@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+<div class="jumbotron">
+  <h1 class="display-4">Welcome to Lush!</h1>
+  <p class="lead">Before we continue, we just need to make sure you're of age.</p>
+  <hr class="my-4">
+  <p>Use the field below to enter your birthday in a MM/DD/YYYY format.<br> 
+    If successful, you'll be redirected home. <br>
+    Otherwise, we can't let you browse. We're sure you understand.<br>
+    If you already have an account or would like to go ahead and sign up, use the nav at the top of the window.
+    Happy hunting!
+  </p>
+  <form action="/verify-age" method="POST">
+  <div class="form-group">
+      {{ form.hidden_tag() }}
+      {% for field in form 
+      if field.widget.input_type != 'hidden' %}
+        <p>
+            {{ field.label }}
+            {{ field(placeholder=field.label.text, class_="form-control")}}
+        </p>
+      {% endfor %}
+    <button class="btn btn-success">Submit</button>
+  </div>
+  </form>
+</div>
+</div>
+{% endblock %}
