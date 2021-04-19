@@ -1,4 +1,5 @@
 import os
+import re
 from flask import Flask, redirect, request, render_template, session, url_for, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
@@ -12,10 +13,10 @@ from forms import SignUpForm, LoginForm, DateField, DateTimeField, ItemQuantityF
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get(
     'DATABASE_URL',
     DATABASE_URI
-).replace('postgres://', "postgresql:///", 1)
+))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
