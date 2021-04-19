@@ -89,11 +89,8 @@ def get_user_cart(username):
                 db.session.rollback()
                 return False
             
-        elif len(user_cart.items) > 0:
-            return user_cart
-        
         else:
-            return False
+            return user_cart
     else:
         return False
         
