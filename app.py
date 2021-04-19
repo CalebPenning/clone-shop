@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get(
     'DATABASE_URL',
     DATABASE_URI
-))
+).replace('postgres://', "postgresql:///", 1))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -24,13 +24,9 @@ app.config['SECRET_KEY'] = (os.environ.get(
     'secret'
 ))
 
-if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
-    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql:///", 1)
-
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
-db.create_all()
 
 def test_search(param, keyword, limit=21):
     if param == 'Name':
