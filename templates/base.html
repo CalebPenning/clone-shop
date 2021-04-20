@@ -22,7 +22,6 @@
     <img src="/static/assets/logo.png" width="90" height="40" alt="">
 </a>
 <div class="collapse navbar-collapse" id="navbarToggler">
-{% if 'of_age' or 'user_id' in session %}
 <form class="form-inline my-2 my-lg-0" action="/shop/search">
     <select name="search-param" id="search-param" class="mdb-select form-control md-form nav-item">
         <option value="" disabled selected>Search By...</option>
@@ -33,17 +32,14 @@
     <button type="submit" class="btn btn-success">Search Store</button>
 </form>
 <ul class="nav navbar-nav navbar-right">
-    {% if 'user_id' not in session %}
-        <li class="nav-item"><a class="nav-link" href="/users/signup">Sign up</a></li>
-        <li class="nav-item"><a class="nav-link" href="/users/login">Login</a></li>
-    
+    {% if user %}
+    <li class="nav-itemt"><a class="nav-link" href="/users/{{ user.id }}/profile">Account Details</a></li>
+    <li class="nav-item"><a href="/users/{{user.id}}/cart" class="nav-link"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+    <li class="nav-item"><a class="nav-link" href="/users/logout">Logout</a></li>
     {% else %}
-        <li class="nav-item"><a class="nav-link" href="/users/{{ user.id }}/profile">Account Details</a></li>
-        <li class="nav-item"><a href="/users/{{user.id}}/cart" class="nav-link"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-        <li class="nav-item"><a class="nav-link" href="/users/logout">Logout</a></li>
-
-    {% endif %}
-{% endif %}    
+    <li class="nav-item"><a class="nav-link" href="/users/signup">Sign up</a></li>
+    <li class="nav-item"><a class="nav-link" href="/users/login">Login</a></li>
+   {% endif %}  
 </ul>
 </div>
 {% endblock %}

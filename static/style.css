@@ -3,7 +3,11 @@
 }
 
 body {
-    background: no-repeat url("./assets/background-img.jpg");
+    background: url("./assets/background-img.jpg");
+}
+
+.order-num {
+    color: oldlace;
 }
 
 /* .col-md-4 {

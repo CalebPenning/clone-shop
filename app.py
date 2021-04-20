@@ -119,10 +119,13 @@ def login_user():
         if user:
             if session['of_age'] == True:
                 session.pop('of_age')
-                           
-            session['user_id'] = user.username
-            flash(f"Welcome back, {user.username}!", 'success')
-            return redirect('/home')
+                session['user_id'] = user.username
+                flash(f"Welcome back, {user.username}!", 'success')
+                return redirect('/home')
+            else:               
+                session['user_id'] = user.username
+                flash(f"Welcome back, {user.username}!", 'success')
+                return redirect('/home')
         
         else:
             form.username.errors.append('Incorrect username.')
@@ -134,8 +137,12 @@ def login_user():
 def log_user_out():
     if 'user_id' in session:
         session.pop('user_id')
-        flash('Successfully logged out.', 'success')
-        return redirect('/home')
+        if 'of_age' in session:
+            session.pop('of_age')
+            flash('Successfully logged out.', 'success')
+        else:
+            flash('Successfully logged out.', 'success')
+            return redirect('/home')
     
     else:
         flash('You cannot logout because you are not logged in.', 'danger')
@@ -182,7 +189,7 @@ def confirm_order(id):
             user = get_user_from_session(session['user_id'])
             cart = get_user_cart(session['user_id'])
             total = sum([i.quantity * i.cart_items.price for i in cart.items])
-            return render_template('confirm_order.html', user=user, cart=cart, total=total)    
+            return render_template('users/checkout/confirm_order.html', user=user, cart=cart, total=total)    
         
 
 @app.route('/shop/search')

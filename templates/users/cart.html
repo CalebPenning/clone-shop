@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container">
-    <h1>Order #{{order.id}} Details</h1>
+    <h1 class="order-num">Order #{{order.id}} Details</h1>
     <table class="table">
     <thead>
         <tr>
@@ -38,7 +38,7 @@
         </tr>
     {% endfor %}
 
-    <tr></tr>
+    <tr><td><a href="/users/{{user.id}}/cart/checkout" class="btn btn-sm btn-success">Checkout</a></td></tr>
     </tbody>
     </table>
 </div>
