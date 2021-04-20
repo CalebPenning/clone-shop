@@ -194,9 +194,10 @@ def get_search_results():
     print(search_results)
     
     if len(search_results) > 1:
-        try:        
+        try:
             check_age = session['of_age']
-            if check_age == True:
+            print(check_age)
+            if check_age == True and 'user_id' not in session:
                 return render_template('shop/search.html', results=search_results)
         except KeyError:
             try:
