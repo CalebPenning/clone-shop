@@ -194,34 +194,30 @@ def confirm_order(id):
 
 @app.route('/shop/search')
 def get_search_results():
-    param = request.args.get('search-param').title()
-    keyword = request.args.get('keyword')
-    print(param, keyword)
-    search_results = test_search(param, keyword)
-    print(search_results)
-    
-    if len(search_results) > 1:
-        try:
-            check_age = session['of_age']
-            print(check_age)
-            if check_age == True and 'user_id' not in session:
-                return render_template('shop/search.html', results=search_results)
-        except KeyError:
-            try:
+    if 'of_age' or 'user_id' in session:
+        param = request.args.get('search-param').title()
+        keyword = request.args.get('keyword')
+        print(param, keyword)
+        search_results = test_search(param, keyword)
+        print(search_results)
+        
+        if len(search_results) > 1:
+            if 'user_id' in session and not 'of_age' in session:
                 curr_user = get_user_from_session(session['user_id'])
-                print(curr_user.id, curr_user.username, "**********************************")
-                return render_template('shop/search.html', results=search_results, user=curr_user)
-            except KeyError:
-                flash("Something went wrong on our end. Sorry about that.", 'danger')
-                return redirect('/')
-    
-    elif len(search_results) < 1:
-        flash('No results found for that keyword. Try shortening your keyword for more broad results.', 'warning')
-        return redirect('/home')
-    
+                return render_template('shop/search.html', user=curr_user, results=search_results)
+            elif 'of_age' in session and not 'user_id' in session:
+                return render_template('shop/search.html', results=search_results)
+        
+        elif len(search_results) < 1:
+            flash('No results found for that keyword. Try shortening your keyword for more broad results.', 'warning')
+            return redirect('/home')
+        
+        else:
+            flash("There was an issue with your search. Check your search paramater and try again.", 'danger')
+            return redirect('/home')
     else:
-        flash("There was an issue with your search. Check your search paramater and try again.", 'danger')
-        return redirect('/home')
+        flash('Please verify your age to browse.', 'warning')
+        return redirect('/')
     
 @app.route('/shop/items/<int:id>/details')
 def get_item_details(id: int):
