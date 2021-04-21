@@ -40,7 +40,7 @@ def get_strains():
                             price=randint(0, 80))
             data_lst.append(new_item)
 
-    final_items = choices(data_lst, k=1000)
+    final_items = choices(data_lst, k=600)
 
     db.session.add_all(final_items)
     db.session.commit()
