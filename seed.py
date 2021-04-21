@@ -7,6 +7,7 @@ db.drop_all()
 db.create_all()
 
 def get_data():
+    data_lst = []
     with open('./data/additional_data.txt') as json_file:
         data = json.load(json_file)
         for flavor in data['flavors']:
