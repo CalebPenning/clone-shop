@@ -1,12 +1,7 @@
 import json
 from app import app
 from models import db, Item, ItemEffect, Effect, ItemFlavor, Flavor
-from random import randint
-
-data_lst = []
-
-item_lst = []
-
+from random import randint, choices
 
 db.drop_all()
 db.create_all()
@@ -33,9 +28,7 @@ def get_data():
     
 def get_strains():
     data_lst = []
-
     with open('./data/strains.txt') as json_file:
-        
         data = json.load(json_file)
         for item in data['strains']:
             print(item['id'], item['name'])
@@ -46,9 +39,9 @@ def get_strains():
                             price=randint(0, 80))
             data_lst.append(new_item)
 
-    db.session.add_all(data_lst)
+    final_items = choices(data_lst, k=1000)
 
-    db.session.add_all(data_lst)
+    db.session.add_all(final_items)
     db.session.commit()
     print("SUCCESS")
     
