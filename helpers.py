@@ -204,4 +204,19 @@ def do_search(req, limit_to=10):
     else: 
         flash('Something happened', 'danger')
         return redirect('/home')
+
+def test_search(param, keyword, limit=21):
+    if param == 'Name':
+        return (Item
+                .query
+                .filter(
+                    Item.name.ilike(f"%{keyword}%")
+                )
+                .limit(limit)).all()
     
+    elif param == 'Description':
+        return (Item
+                .query
+                .filter(
+                    Item.description.ilike(f"%{keyword}%")
+                )).all() 

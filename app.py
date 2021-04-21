@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import func
 from sqlalchemy.sql.functions import random
-from helpers import check_birthday, do_signup, get_user_from_session, compare_users, confirm_passwords, add_item, adjust_quantity, remove_items, get_user_cart, do_search
+from helpers import check_birthday, do_signup, get_user_from_session, compare_users, confirm_passwords, add_item, adjust_quantity, remove_items, get_user_cart, do_search, test_search
 from keys import DATABASE_URI, SECRET_KEY
 
 from models import db, connect_db, Order, OrderItem, Item, ItemEffect, Effect, ItemFlavor, Flavor, User
@@ -28,23 +28,6 @@ app.config['SECRET_KEY'] = (os.environ.get(
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
-
-
-def test_search(param, keyword, limit=21):
-    if param == 'Name':
-        return (Item
-                .query
-                .filter(
-                    Item.name.ilike(f"%{keyword}%")
-                )
-                .limit(limit)).all()
-    
-    elif param == 'Description':
-        return (Item
-                .query
-                .filter(
-                    Item.description.ilike(f"%{keyword}%")
-                )).all()
 
 @app.route('/')
 def go_home():
@@ -194,30 +177,26 @@ def confirm_order(id):
 
 @app.route('/shop/search')
 def get_search_results():
-    if 'of_age' or 'user_id' in session:
+    if 'user_id' in session:
         param = request.args.get('search-param').title()
         keyword = request.args.get('keyword')
         print(param, keyword)
         search_results = test_search(param, keyword)
         print(search_results)
-        
-        if len(search_results) > 1:
-            if 'user_id' in session and not 'of_age' in session:
-                curr_user = get_user_from_session(session['user_id'])
-                return render_template('shop/search.html', user=curr_user, results=search_results)
-            elif 'of_age' in session and not 'user_id' in session:
-                return render_template('shop/search.html', results=search_results)
-        
-        elif len(search_results) < 1:
-            flash('No results found for that keyword. Try shortening your keyword for more broad results.', 'warning')
-            return redirect('/home')
-        
-        else:
-            flash("There was an issue with your search. Check your search paramater and try again.", 'danger')
-            return redirect('/home')
+        curr_user = get_user_from_session(session['user_id'])
+        return render_template('shop/search.html', results=search_results, user=curr_user)
+    elif 'of_age' in session:
+        param = request.args.get('search-param').title()
+        keyword = request.args.get('keyword')
+        print(param, keyword)
+        search_results = test_search(param, keyword)
+        print(search_results)
+        return render_template('shop/search.html', results=search_results)
     else:
-        flash('Please verify your age to browse.', 'warning')
+        flash('Please verify your age, login, or create an account to browse the shop.', 'danger')
         return redirect('/')
+    
+        
     
 @app.route('/shop/items/<int:id>/details')
 def get_item_details(id: int):
