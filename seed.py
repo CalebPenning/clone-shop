@@ -51,49 +51,63 @@ def add_attrs_to_items():
     flavors = [f.name for f in Flavor.query.all()]
     
     with open('./data/strains.txt') as json_file:
+        curr_items = Item.query.all()
         data = json.load(json_file)
         for item in data['strains']:
-            comp_strain = Item.query.get(int(item['id']))
-            effect_lst = item['effects']
-
-            for effect in effect_lst:
-                if effect in effects:
-                    effect_to_add = Effect.query.filter_by(name=effect).first()
-                    comp_strain.effects.append(effect_to_add)
-            
-            try:
-                db.session.commit()
-                print("SUCCESS!")
-            except:
-                db.session.rollback()
-                print("Frigg off")
-
-def add_attrs_to_items():
-    effects = [e.name for e in Effect.query.all()]
-    flavors = [f.name for f in Flavor.query.all()]
-    
-    with open('./data/strains.txt') as json_file:
-        data = json.load(json_file)
-        for item in data['strains']:
-            comp_strain = Item.query.get(int(item['id']))
+            comp_strain = Item.query.filter(
+                Item.name == item['name']
+            ).first()
             effect_lst = item['effects']
             flavor_lst = item['flavors']
             
-            for effect in effect_lst:
-                if effect in effects:
-                    effect_to_add = Effect.query.filter_by(name=effect).first()
-                    comp_strain.effects.append(effect_to_add)
+            if comp_strain != None:
+                for effect in effect_lst:
+                    if effect in effects:
+                        effect_to_add = Effect.query.filter_by(name=effect).first()
+                        comp_strain.effects.append(effect_to_add)
+                        
+                for flavor in flavor_lst:
+                    if flavor in flavor_lst:
+                        flavor_to_add = Flavor.query.filter_by(name=flavor).first()
+                        comp_strain.flavors.append(flavor_to_add)
+            else:
+                print('pass')
+                
+        
             
-            for flavor in flavor_lst:
-                if flavor in flavors:
-                    flavor_to_add = Flavor.query.filter_by(name=flavor).first()
-                    comp_strain.flavors.append(flavor_to_add)
-            try:
-                db.session.commit()
-                print("SUCCESS!")
-            except:
-                db.session.rollback()
-                print("Frigg off")
+        try:
+            db.session.commit()
+            print("SUCCESS!")
+        except:
+            db.session.rollback()
+            print("Frigg off")
+
+# def add_attrs_to_items():
+#     effects = [e.name for e in Effect.query.all()]
+#     flavors = [f.name for f in Flavor.query.all()]
+    
+#     with open('./data/strains.txt') as json_file:
+#         data = json.load(json_file)
+#         for item in data['strains']:
+#             comp_strain = Item.query.get(int(item['id']))
+#             effect_lst = item['effects']
+#             flavor_lst = item['flavors']
+            
+#             for effect in effect_lst:
+#                 if effect in effects:
+#                     effect_to_add = Effect.query.filter_by(name=effect).first()
+#                     comp_strain.effects.append(effect_to_add)
+            
+#             for flavor in flavor_lst:
+#                 if flavor in flavors:
+#                     flavor_to_add = Flavor.query.filter_by(name=flavor).first()
+#                     comp_strain.flavors.append(flavor_to_add)
+#             try:
+#                 db.session.commit()
+#                 print("SUCCESS!")
+#             except:
+#                 db.session.rollback()
+#                 print("Frigg off")
                 
 
 get_data()        
