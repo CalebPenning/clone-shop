@@ -1,20 +1,21 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Order #{{ order.id }} details{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>Order #{{cart.id}} Details</h1>
+    <h1>Order #{{ order.id }} Details</h1>
     <table class="table" style="background-color: rgba(255, 255, 255, 0.9);">
     <thead>
         <tr>
             <th scope="col">Item ID#</th>
             <th scope="col">Item Name</th>
             <th scope="col">Quantity</th>
-            <th scope="col">Cost</th>
-            <th scope="col">Delete</th>        
+            <th scope="col">Cost</th>        
         </tr>
     </thead>
     <tbody>
-    {% for item in cart.items %}
+    {% for item in order.items %}
         <tr>
             <th scope="row">{{ item.cart_items.id }}</th>
             <td>{{ item.cart_items.name }}</td>
@@ -22,7 +23,6 @@
             {{ item.quantity }} @ ${{ item.cart_items.price }}
             </td>
             <td>${{ item.quantity * item.cart_items.price }}</td>
-            <td><form action="/shop/items/{{ item.cart_items.id }}/delete" method="POST"><button type="submit"><i class="fa fa-trash"></i></button></form></td>
         </tr>
     {% endfor %}
 
@@ -32,7 +32,7 @@
     </tr>
     </tbody>
     <form action="/users/{{ user.id }}/cart/checkout" method="POST" class="form-inline">
-        <button>Place Order</button>
+        
     </form>
     </table>
 </div>

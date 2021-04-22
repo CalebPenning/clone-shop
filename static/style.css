@@ -6,30 +6,30 @@ body {
     background: url("./assets/background-img.jpg");
 }
 
-.order-num {
-    color: oldlace;
-}
+/* .order-num {
+    color: rgba(255, 255, 255, 0.9);
+} */
 
 /* .col-md-4 {
     height: 400px;
 } */
 
 .col {
-    color: white;
+    color: black;
 }
 
 th {
-    color: white;
+    color: black;
 }
 
 td {
-    color: white;
+    color: black;
 }
 
 tr {
-    color: white;
+    color: black;
 }
 
 h1 {
-    color: white;
+    color: black;
 }

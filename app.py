@@ -100,7 +100,7 @@ def login_user():
     if form.validate_on_submit():
         user = User.authenticate(form)
         if user:
-            if session['of_age'] == True:
+            if 'of_age' in session:
                 session.pop('of_age')
                 session['user_id'] = user.username
                 flash(f"Welcome back, {user.username}!", 'success')
@@ -109,6 +109,7 @@ def login_user():
                 session['user_id'] = user.username
                 flash(f"Welcome back, {user.username}!", 'success')
                 return redirect('/home')
+        
         
         else:
             form.username.errors.append('Incorrect username.')
@@ -139,11 +140,42 @@ def show_user_profile(id: int):
     else:
         if compare_users(session['user_id'], id) == True:
             user = get_user_from_session(session['user_id'])
-            return render_template('users/profile.html', user=user)
+            return render_template("users/profile.html", user=user)
         
         else:
             flash("You do not have permission to view that page.", 'warning')
             return redirect('/users/login')
+        
+@app.route('/users/<int:id>/orders')
+def show_prev_orders(id: int):
+    if 'user_id' in session:
+        if compare_users(session['user_id'], id):    
+            curr_user = get_user_from_session(session['user_id'])
+            orders = Order.query.filter_by(user_id=id).filter(Order.order_status == 'complete').all()
+            return render_template('users/orders.html', user=curr_user, orders=orders)
+        else:
+            flash("You do not have permission to view that page.", 'danger')
+            return redirect('/')
+    
+    else:
+        flash("Please login to access your past orders", 'warning')
+        return redirect('/users/login')
+    
+@app.route('/users/<int:u_id>/orders/<int:o_id>/details')
+def show_order_details(u_id: int, o_id: int):
+    if compare_users(session['user_id'], u_id):
+        order = (Order
+                 .query
+                 .filter_by(user_id=u_id)
+                 .filter(Order.id == o_id)
+                 .first())
+        total = sum([i.quantity * i.cart_items.price for i in order.items])
+        user = get_user_from_session(session['user_id'])
+        return render_template('users/orders/details.html', user=user, order=order, total=total)
+    
+    else:
+        flash('You do not have permission to view that page', 'danger')
+        return redirect('/')
 
 @app.route('/users/<int:id>/cart')
 def show_user_cart(id):
@@ -171,8 +203,24 @@ def confirm_order(id):
         if compare_users(session['user_id'], id) == True:
             user = get_user_from_session(session['user_id'])
             cart = get_user_cart(session['user_id'])
-            total = sum([i.quantity * i.cart_items.price for i in cart.items])
-            return render_template('users/checkout/confirm_order.html', user=user, cart=cart, total=total)    
+            if request.method == 'POST':
+                cart.order_status = 'complete'
+                new_cart = Order(user_id=user.id)
+                db.session.add(new_cart)
+                
+                try:
+                    db.session.commit()
+                    flash("Order complete. You've been redirected home.", 'success')
+                    return redirect('/')
+                
+                except IntegrityError:
+                    flash("There was an issue completing your order. Please try again.", 'warning')
+                    return redirect(f"/users/{user.id}/cart")
+                
+            else:
+                total = sum([i.quantity * i.cart_items.price for i in cart.items])
+                return render_template('users/checkout/confirm_order.html', user=user, cart=cart, total=total)
+        
         
 
 @app.route('/shop/search')
@@ -235,12 +283,13 @@ def add_item_to_cart(id: int):
 def adjust_item_quantity(id):
     if 'user_id' in session:
         adjusted_items = adjust_quantity(id, request, session['user_id'])
+        user = get_user_from_session(session['user_id'])
         if adjusted_items:
-            flash("Item quantity adjusted. Access your cart <a href='#'>here</a>", 'success')
-            return redirect(f"/shop/items/{id}/details")
+            flash("Item quantity adjusted.", 'success')
+            return redirect(f"/users/{user.id}/cart")
         else:
-            flash("Failure")
-            return redirect(f"/shop/items/{id}/details")
+            flash("Could not adjust items. Please try again.", 'danger')
+            return redirect(f"/users/{user.id}/cart")
         
     else:
         flash("Please login to place an order.", 'warning')

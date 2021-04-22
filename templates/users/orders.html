@@ -1,0 +1,12 @@
+{% block title %} {{ user.username }}'s order history {% endblock %}
+
+{% block content %}
+<div class="container" style="background-color: rgba(255, 255, 255, 0.9);">
+    <h1 class="order-num">Your Order History</h1>
+    <ul class="list-group">
+    {% for order in orders %}
+        <li class="list-group-item"><a href='/users/{{user.id}}/orders/{{order.id}}'>Order #{{ order.id}}</a></li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock%}

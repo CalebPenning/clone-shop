@@ -1,4 +1,23 @@
 {% extends 'base.html' %}
 
+{% block title %}{{ user.username }}'s profile{% endblock %}
+
 {% block content %}
+<div class="container">
+    <h1>Account Details</h1>
+    <ul class="list-group" id="acc-info">
+        <li class="list-group-item">Account Number: {{ user.id }}</li>
+        <li class="list-group-item">Username: {{ user.username }}</li>
+        <li class="list-group-item">Email Address: {{ user.email }}</li>
+        <li class="list-group-item">Full Name: {{ user.first_name }} {{ user.last_name }}</li>
+        <li class="list-group-item">Birthday: {{ user.birthday.strftime("%m/%d/%Y") }}</li>
+        <li class="list-group-item">Account Created At: {{ user.created_at.strftime("%m/%d/%Y") }}</li>
+    </ul>
+    <h2 class="display-2" id="order-head"></h2>
+    <ul class="list-group" id="orders">
+        {% for order in user.orders if order.order_status != 'active' %}
+        <li class="list-group-item"><a href="/users/{{ user.id }}/orders/{{ order.id }}/details">Order #{{ order.id }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

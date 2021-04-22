@@ -2,7 +2,7 @@
 {% block title %} {{ user.username }}'s cart {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container" style="background-color: rgba(255, 255, 255, 0.9);">
     <h1 class="order-num">Order #{{order.id}} Details</h1>
     <table class="table">
     <thead>
@@ -10,6 +10,7 @@
             <th scope="col">Item ID#</th>
             <th scope="col">Item Name</th>
             <th scope="col">Quantity</th>
+            <th scope="col">Adjust Quantity</th>
             <th scope="col">Cost</th>
             <th scope="col">Delete</th>        
         </tr>
@@ -19,11 +20,11 @@
         <tr>
             <th scope="row">{{ item.cart_items.id }}</th>
             <td>{{ item.cart_items.name }}</td>
+            <td>{{ item.quantity }} @ ${{ item.cart_items.price }}</td>
             <td>
             <form method="POST" action="/shop/items/{{ item.cart_items.id }}/adjust" class="form-inline">
                 <p>
                     {% for field in form if field.widget.input_type != 'hidden' %}
-                        {{ field.label }}
                         {{ field(
                             placeholder=item.quantity,
                             class_="form-inline"
