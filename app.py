@@ -124,6 +124,7 @@ def log_user_out():
         if 'of_age' in session:
             session.pop('of_age')
             flash('Successfully logged out.', 'success')
+            return redirect('/')
         else:
             flash('Successfully logged out.', 'success')
             return redirect('/home')
