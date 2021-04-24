@@ -270,10 +270,10 @@ def add_item_to_cart(id: int):
         print("OK")
         add_to_cart = add_item(id, request, session['user_id'])
         if add_to_cart:
-            flash("Item added successfully. Access your cart <a href='#'>here</a>", 'success')
+            flash("Item added successfully.", 'success')
             return redirect(f"/shop/items/{id}/details")
         else:
-            flash("FAILURE", 'danger')
+            flash("We had an issue adding the item to your cart. Please try again.", 'danger')
             return redirect(f"/shop/items/{id}/details")
     else:
         flash("You do not have permission to make an order. Login to do so.", 'danger')

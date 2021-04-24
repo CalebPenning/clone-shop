@@ -2,9 +2,10 @@
 {% block title %} {{ user.username }}'s cart {% endblock %}
 
 {% block content %}
+
 <div class="container" style="background-color: rgba(255, 255, 255, 0.9);">
     <h1 class="order-num">Order #{{order.id}} Details</h1>
-    <table class="table">
+    <table class="table table-responsive-sm">
     <thead>
         <tr>
             <th scope="col">Item ID#</th>

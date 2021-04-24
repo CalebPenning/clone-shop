@@ -3,10 +3,11 @@
 {% block title %}{{ user.username }}'s profile{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container" style="background-color: rgba(255, 255, 255, 0.9);">
+<br>
     <h1>Account Details</h1>
     <ul class="list-group" id="acc-info">
-        <li class="list-group-item">Account Number: {{ user.id }}</li>
+        <li class="list-group-item">Account ID: {{ user.id }}</li>
         <li class="list-group-item">Username: {{ user.username }}</li>
         <li class="list-group-item">Email Address: {{ user.email }}</li>
         <li class="list-group-item">Full Name: {{ user.first_name }} {{ user.last_name }}</li>
@@ -19,5 +20,6 @@
         <li class="list-group-item"><a href="/users/{{ user.id }}/orders/{{ order.id }}/details">Order #{{ order.id }}</a></li>
         {% endfor %}
     </ul>
+<br>
 </div>
 {% endblock %}

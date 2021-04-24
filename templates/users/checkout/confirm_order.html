@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>Order #{{cart.id}} Details</h1>
-    <table class="table" style="background-color: rgba(255, 255, 255, 0.9);">
+<div class="container" style="background-color: rgba(255, 255, 255, 0.9);">
+    <h1 class="order-num">Order #{{cart.id}} Details</h1>
+    <table class="table table-responsive-sm">
     <thead>
         <tr>
             <th scope="col">Item ID#</th>
@@ -30,10 +30,15 @@
         <th>Grand Total:</th>
         <td>${{ total }}</td>
     </tr>
-    </tbody>
-    <form action="/users/{{ user.id }}/cart/checkout" method="POST" class="form-inline">
-        <button>Place Order</button>
+
+    <tr>
+        <td>
+            <form action="/users/{{ user.id }}/cart/checkout" method="POST" class="form-inline">
+            <button class="btn btn-success">Place Order</button>
     </form>
+        </td>
+    </tr>
+    </tbody>
     </table>
 </div>
 {% endblock %}
