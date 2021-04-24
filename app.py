@@ -66,6 +66,7 @@ def check_user_age():
 @app.route('/sorry')
 def apologize():
     flash("We're sorry. You are not of age. If you input your age incorrectly, try again.")
+    return redirect('/')
 
 @app.route('/home')
 def homepage():

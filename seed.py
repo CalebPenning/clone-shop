@@ -22,10 +22,10 @@ def get_data():
 
     try:
         db.session.commit()
-        print(success)
+        print('success')
 
     except:
-        print('oops')
+        print('Could not commit to db.')
     
 def get_strains():
     data_lst = []
@@ -36,11 +36,11 @@ def get_strains():
             new_item = Item(id=int(item['id']),
                             name=item['name'],
                             description=str(item['description']),
-                            race=item['race'].title(),
+                            race=str(item['race']).title(),
                             price=randint(0, 80))
             data_lst.append(new_item)
 
-    final_items = choices(data_lst, k=600)
+    final_items = choices(data_lst, k=500)
 
     db.session.add_all(final_items)
     db.session.commit()
@@ -80,35 +80,7 @@ def add_attrs_to_items():
             print("SUCCESS!")
         except:
             db.session.rollback()
-            print("Frigg off")
-
-# def add_attrs_to_items():
-#     effects = [e.name for e in Effect.query.all()]
-#     flavors = [f.name for f in Flavor.query.all()]
-    
-#     with open('./data/strains.txt') as json_file:
-#         data = json.load(json_file)
-#         for item in data['strains']:
-#             comp_strain = Item.query.get(int(item['id']))
-#             effect_lst = item['effects']
-#             flavor_lst = item['flavors']
-            
-#             for effect in effect_lst:
-#                 if effect in effects:
-#                     effect_to_add = Effect.query.filter_by(name=effect).first()
-#                     comp_strain.effects.append(effect_to_add)
-            
-#             for flavor in flavor_lst:
-#                 if flavor in flavors:
-#                     flavor_to_add = Flavor.query.filter_by(name=flavor).first()
-#                     comp_strain.flavors.append(flavor_to_add)
-#             try:
-#                 db.session.commit()
-#                 print("SUCCESS!")
-#             except:
-#                 db.session.rollback()
-#                 print("Frigg off")
-                
+            print("Error associating data. Check logs for details.")
 
 get_data()        
 get_strains()
