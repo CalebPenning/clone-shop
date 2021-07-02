@@ -25,3 +25,5 @@ I built it for a few reasons:
 
 That should get you going on your local machine.
 
+### Warning
+The app.py file is very long. Routes need to be condensed. I plan on updating this to Flask 2.0 soon. 
