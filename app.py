@@ -228,20 +228,31 @@ def confirm_order(id):
 @app.route('/shop/search')
 def get_search_results():
     if 'user_id' in session:
-        param = request.args.get('search-param').title()
+        param = request.args.get('search-param')
         keyword = request.args.get('keyword')
+        # if user tries to submit blank search, redirect and warn them
+        if not param or not keyword:
+            flash("Please enter a search parameter", 'warning')
+            return redirect('/')
+        # Title case the param as it  is in our DB
+        param = param.title()
         print(param, keyword)
         search_results = test_search(param, keyword)
         print(search_results)
         curr_user = get_user_from_session(session['user_id'])
         return render_template('shop/search.html', results=search_results, user=curr_user)
+    # same functionality but for guest users 
     elif 'of_age' in session:
-        param = request.args.get('search-param').title()
+        param = request.args.get('search-param')
         keyword = request.args.get('keyword')
-        print(param, keyword)
+        if not param or not keyword:
+            flash("Please enter a search parameter", 'warning')
+            return redirect('/')
+        param = param.title()
         search_results = test_search(param, keyword)
         print(search_results)
         return render_template('shop/search.html', results=search_results)
+    # Otherwise NO 
     else:
         flash('Please verify your age, login, or create an account to browse the shop.', 'danger')
         return redirect('/')
