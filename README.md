@@ -12,7 +12,7 @@ I built it for a few reasons:
 - I wanted to have an app with real information! There is actual strain information on each page. Everything is pulled from Evan Busse's Strain API (which is now offline unfortunately), and displays a description, as well as positive, negative, and medical effects that come along with use.
 
 
-## **Getting Setup**
+## **Running The App On Your Machine**
 
 - Download or clone this code
 - Have Python 3.7.7+ installed as well as pip
@@ -26,4 +26,4 @@ I built it for a few reasons:
 That should get you going on your local machine.
 
 ### Warning
-The app.py file is very long. Routes need to be condensed. I plan on updating this to Flask 2.0 soon. 
+The app.py file is very long. Routes need to be condensed and broken up. I plan on updating this to Flask 2.0 soon to make use of proper HTTP verbs. 
