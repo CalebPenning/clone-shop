@@ -7,7 +7,8 @@
     <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{ item.name }}</h5>
-                <h6 class="card-subtitle text-muted">{{ item.race }}</h6>
+                <h6 class="card-subtitle text-muted mb-3">{{ item.race }}</h6>
+                <pre class="card-subtitle text-muted"><b>Priced at ${{ item.price }} each </b></pre>
                 <p class="card-text">{{ item.description }}</p>
                 <form action="/shop/items/{{item.id}}/add" method="POST" class="form-inline">
                     <p>
@@ -18,23 +19,8 @@
                     </p>
                     <button class="btn btn-success">Add To Cart</button>
                 </form>
-                {# <ul>
-                {% for effect in item.effects %}
-                <h3>Medical Uses:</h3>
-                    {% if effect.effect_type == 'medical' %}
-                    <li class="list-group-item"> {{ effect.name }} </li>
-
-                <h3>Positive Effects:</h3>
-                    {% elif effect.effect_type == 'positive' %}
-                    <li class="list-group-item"> {{ effect.name }} </li>
-                <h3>Negative:</h3>
-                    {% else %}
-                    <li class="list-group-item"> {{ effect.name }} </li>
-                    {% endif %}
-                {% endfor %} #}
-                {# </ul> #}
+                
                 <div class="row">
-                {# <h2>Effects:</h2> #}
                 <ul class="list-group fx col-md-4">
                     <h3>Medical Uses</h3>
                     <p class="lead">Customers use {{item.name}} to treat: </p>

@@ -53,9 +53,8 @@ def check_user_age():
         if request.method == "POST":
             print(form)
             if form.validate_on_submit():
-                print(form.birthday)
                 verified = check_birthday(form.birthday.data)
-                print(verified)
+
                 if verified == True:
                     session['of_age'] = True
                     flash('Age verified. Feel free to browse. Please sign up before placing an order.', 'success')
@@ -90,8 +89,12 @@ def homepage():
     if 'user_id' in session:
         user = get_user_from_session(session['user_id'])
         return render_template('user_home.html', items=items, user=user)
-    else:
+    
+    elif "of_age" in session:
         return render_template('anon_home.html', items=items)
+    
+    else:
+        return redirect('/')
 
 @app.route('/users/signup', methods=["GET", "POST"])
 def user_signup():
@@ -101,21 +104,26 @@ def user_signup():
         flash("You are already signed up. You've been redirected.", 'warning')
         return redirect('/')
     
+    # check for valid form data, then check the two password fields
     if form.validate_on_submit():
         if confirm_passwords(form):
+            if 'of_age' in session:
+                session.pop('of_age')
             new_user = do_signup(form)
             session['user_id'] = new_user.username
             flash("Account created successfully. Welcome!", 'success')
             return redirect('/home')
         else:
             flash("The passwords you entered did not match. Try again.", "warning")
+    elif request.method == "POST" and not form.validate_on_submit():
+        flash("There was an issue signing you up. Double check all fields and try again", "warning")
 
     return render_template('users/signup.html', form=form)
 
 @app.route('/users/login', methods=["GET", "POST"])
 def login_user():
     form = LoginForm()
-    if form.validate_on_submit():
+    if request.method == "POST":
         user = User.authenticate(form)
         if user:
             if 'of_age' in session:
@@ -132,6 +140,7 @@ def login_user():
         else:
             form.username.errors.append('Incorrect username.')
             return redirect('/users/login')
+    
     else: 
         return render_template('users/login.html', form=form)
 
@@ -165,20 +174,20 @@ def show_user_profile(id: int):
             flash("You do not have permission to view that page.", 'warning')
             return redirect('/users/login')
         
-@app.route('/users/<int:id>/orders')
-def show_prev_orders(id: int):
-    if 'user_id' in session:
-        if compare_users(session['user_id'], id):    
-            curr_user = get_user_from_session(session['user_id'])
-            orders = Order.query.filter_by(user_id=id).filter(Order.order_status == 'complete').all()
-            return render_template('users/orders.html', user=curr_user, orders=orders)
-        else:
-            flash("You do not have permission to view that page.", 'danger')
-            return redirect('/')
+# @app.route('/users/<int:id>/orders')
+# def show_prev_orders(id: int):
+#     if 'user_id' in session:
+#         if compare_users(session['user_id'], id):    
+#             curr_user = get_user_from_session(session['user_id'])
+#             orders = Order.query.filter_by(user_id=id).filter(Order.order_status == 'complete').all()
+#             return render_template('users/orders.html', user=curr_user, orders=orders)
+#         else:
+#             flash("You do not have permission to view that page.", 'danger')
+#             return redirect('/')
     
-    else:
-        flash("Please login to access your past orders", 'warning')
-        return redirect('/users/login')
+#     else:
+#         flash("Please login to access your past orders", 'warning')
+#         return redirect('/users/login')
     
 @app.route('/users/<int:u_id>/orders/<int:o_id>/details')
 def show_order_details(u_id: int, o_id: int):
@@ -343,10 +352,10 @@ def remove_order_item(id):
         return redirect('/users/login')
 
 
-@app.route('/random-items')
-def get_rando():
-    items = Item.query.order_by(random()).limit(10).all()
-    return render_template('random.html', items=items)
+# @app.route('/random-items')
+# def get_rando():
+#     items = Item.query.order_by(random()).limit(10).all()
+#     return render_template('random.html', items=items)
 
 @app.errorhandler(404)
 def handle_404(e):

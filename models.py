@@ -33,11 +33,11 @@ class User(db.Model):
     
     first_name = db.Column(db.Text,
                            nullable=False,
-                           default="")
+                           default="New")
     
     last_name = db.Column(db.Text,
                           nullable=False,
-                          default="")
+                          default="User")
     
     birthday = db.Column(db.DateTime,
                          nullable=False)
