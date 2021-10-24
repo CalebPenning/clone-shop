@@ -86,7 +86,7 @@ class AgeVerificationForm(FlaskForm):
     birthday = DateTimeField(
         "Your Birthday",
         validators=[
-            DataRequired()
+            DataRequired(message="Please enter a birth date")
             ],
         format="%m/%d/%Y"
     )

@@ -1,6 +1,5 @@
 import json
-from app import app
-from models import db, Item, ItemEffect, Effect, ItemFlavor, Flavor
+from models import db, Item, Effect, Flavor
 from random import randint, choices
 
 db.drop_all()
@@ -48,10 +47,8 @@ def get_strains():
     
 def add_attrs_to_items():
     effects = [e.name for e in Effect.query.all()]
-    flavors = [f.name for f in Flavor.query.all()]
     
     with open('./data/strains.txt') as json_file:
-        curr_items = Item.query.all()
         data = json.load(json_file)
         for item in data['strains']:
             comp_strain = Item.query.filter(

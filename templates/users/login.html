@@ -7,7 +7,7 @@
         {{ form.hidden_tag() }}
         {% for field in form
             if field.widget.input_type != 'hidden' %}
-            <p>
+            <p class="label">
                 {{ field.label }}
                 {{ field(placeholder=field.label.text, class_="form-control") }}
             </p>

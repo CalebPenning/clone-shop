@@ -1,6 +1,5 @@
 import datetime
-from flask import flash, session, request, redirect
-from sqlalchemy.sql.expression import func
+from flask import flash, session, redirect
 from sqlalchemy.exc import IntegrityError
 from models import User, Order, db, bcrypt, OrderItem, Item
 
@@ -8,6 +7,9 @@ SECRET_KEY = '3UsZBW6qU3'
 DATABASE_URI = "postgresql:///clone_shop"
     
 def check_birthday(date):
+    print(date)
+    if not date:
+        return False
     now = datetime.datetime.now()
     curr_age = now.year - date.year - ((now.month, now.day) < (date.month, date.day))
     
@@ -19,10 +21,10 @@ def check_birthday(date):
 def do_signup(form):
     new_user = User.register(form)
     db.session.add(new_user)
-        
+    print(new_user, form)
     try:
         db.session.commit()
-    except IntegrityError:
+    except:
         flash('There was an error signing you up. Check the inputs and try again.', 'warning')
             
     reg_user = User.query.get_or_404(new_user.id)

@@ -1,15 +1,13 @@
 import os
-import re
-from flask import Flask, redirect, request, render_template, session, url_for, flash
+from flask import Flask, redirect, request, render_template, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql.expression import func
 from sqlalchemy.sql.functions import random
-from helpers import check_birthday, do_signup, get_user_from_session, compare_users, confirm_passwords, add_item, adjust_quantity, remove_items, get_user_cart, do_search, test_search
+from helpers import check_birthday, do_signup, get_user_from_session, compare_users, confirm_passwords, add_item, adjust_quantity, remove_items, get_user_cart, test_search
 from keys import DATABASE_URI, SECRET_KEY
 
-from models import db, connect_db, Order, OrderItem, Item, ItemEffect, Effect, ItemFlavor, Flavor, User
-from forms import SignUpForm, LoginForm, DateField, DateTimeField, ItemQuantityForm, AgeVerificationForm
+from models import db, connect_db, Order, Item, User
+from forms import SignUpForm, LoginForm, ItemQuantityForm, AgeVerificationForm
 
 app = Flask(__name__)
 
@@ -29,6 +27,12 @@ debug = DebugToolbarExtension(app)
 
 connect_db(app)
 
+# Homepage of the application
+## On hitting this route, check the session data
+### If User has either a user_id: id or of_age: True in session
+### Redirect to store homepage
+### Otherwise, send them to the age verification form
+
 @app.route('/')
 def go_home():
     if 'of_age' not in session and 'user_id' not in session:
@@ -36,23 +40,34 @@ def go_home():
     
     elif 'of_age' in session or 'user_id' in session:
         return redirect('/home')
-    
+
+### On a GET request,
+### this route renders an html form for the current user to 
+### enter their birthday, and if they are over 21, enter the store
+
+### on POST, 
 @app.route('/verify-age', methods=["GET", "POST"])
 def check_user_age():
     if 'of_age' and 'user_id' not in session:
         form = AgeVerificationForm()
-        
-        if form.validate_on_submit():
-            verified = check_birthday(form.birthday.data)
-            
-            if verified == True:
-                session['of_age'] = True
-                flash('Age verified. Feel free to browse. Please sign up before placing an order.', 'success')
-                return redirect('/home')
-            
+        if request.method == "POST":
+            print(form)
+            if form.validate_on_submit():
+                print(form.birthday)
+                verified = check_birthday(form.birthday.data)
+                print(verified)
+                if verified == True:
+                    session['of_age'] = True
+                    flash('Age verified. Feel free to browse. Please sign up before placing an order.', 'success')
+                    return redirect('/home')
+                
+                elif not form.birthday or not verified or verified == False:
+                    flash("We're sorry. You are not of age. If you input your age incorrectly, try again.", "danger")
+                    return redirect('/sorry')
             else:
-                return redirect('/sorry')
-        
+                flash("Please enter a valid birthday", "warning")
+                return redirect('/')
+            
         else:
             return render_template('verify_age.html', form=form)
     
@@ -61,12 +76,12 @@ def check_user_age():
         return redirect('/home')
     
     else:
-        flash("Something went wrong. Whatever that was, don't do that!")
+        flash("Something went wrong. Please try again")
+        return redirect('/')
     
 @app.route('/sorry')
 def apologize():
-    flash("We're sorry. You are not of age. If you input your age incorrectly, try again.")
-    return redirect('/')
+    return redirect('/verify-age')
 
 @app.route('/home')
 def homepage():
@@ -92,6 +107,8 @@ def user_signup():
             session['user_id'] = new_user.username
             flash("Account created successfully. Welcome!", 'success')
             return redirect('/home')
+        else:
+            flash("The passwords you entered did not match. Try again.", "warning")
 
     return render_template('users/signup.html', form=form)
 
